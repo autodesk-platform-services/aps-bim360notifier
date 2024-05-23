@@ -35,7 +35,7 @@ var Credentials = require('./../credentials');
 // this is the endpoint that will be exposed
 var hookCallbackEntpoint = '/api/forge/hook/callback';
 
-router.post('/api/forge/hook', jsonParser, function (req, res) {
+router.post('/api/aps/hook', jsonParser, function (req, res) {
   // session with access token
   var token = new Credentials(req.session);
   var events = req.body.events;
@@ -81,7 +81,7 @@ function DeleteAndCreateHooks(two_legged_access_token, three_legged_access_token
     });
 }
 
-router.get('/api/forge/hook/*', function (req, res) {
+router.get('/api/api/hook/*', function (req, res) {
   var params = req.url.split('/');
   var folderId = params[params.length - 1];
 

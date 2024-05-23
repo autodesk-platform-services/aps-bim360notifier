@@ -4,6 +4,9 @@
   "description": "",
   "main": "start.js",
   "dependencies": {
+    "@aps_sdk/authentication": "^0.0.1-beta.1",
+    "@aps_sdk/autodesk-sdkmanager": "^0.0.4-beta.1",
+    "@aps_sdk/data-management": "^0.1.0-beta.1",
     "async": "^2.5.0",
     "body-parser": "^1.18.2",
     "bootstrap": "^3.4.1",
@@ -21,7 +24,6 @@
     "request": "^2.83.0",
     "twilio": "^3.9.0"
   },
-  "devDependencies": {},
   "scripts": {
     "start": "NODE_ENV=production node start.js",
     "dev": "node start.js",

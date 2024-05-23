@@ -20,8 +20,8 @@
 
 var app = require('./server/server');
 
-if (process.env.FORGE_CLIENT_ID == null || process.env.FORGE_CLIENT_SECRET == null || process.env.FORGE_WEBHOOK_URL == null)
-  console.log('*****************\nWARNING: Forge Client ID, Client Secret & Hook callback URL not defined as environment variables.\n*****************');
+if (process.env.APS_CLIENT_ID == null || process.env.APS_CLIENT_SECRET == null || process.env.APS_WEBHOOK_URL == null)
+  console.log('*****************\nWARNING: APS Client ID, Client Secret & Hook callback URL not defined as environment variables.\n*****************');
 
 var server = app.listen(app.get('port'), function () {
   console.log('Starting at ' + (new Date()).toString());

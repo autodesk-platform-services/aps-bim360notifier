@@ -19,9 +19,9 @@
 'use strict'; // http://www.w3schools.com/js/js_strict.asp
 
 // token handling in session
-var Credentials = require('./../credentials');
+var Credentials = require('../credentials');
 // forge config information, such as client ID and secret
-var config = require('./../config');
+var config = require('../config');
 
 // entity type encoder
 var Encoder = require('node-html-encoder').Encoder;
@@ -32,15 +32,13 @@ var express = require('express');
 var router = express.Router();
 // forge oAuth package
 var forgeSDK = require('forge-apis');
+const { authRefreshMiddleware, getDAHubs, getDAProjects } = require('./service.js');
+
+router.use('/api', authRefreshMiddleware);
 
 router.get('/api/forge/tree', function (req, res) {
   var token = new Credentials(req.session);
-  var forge3legged = new forgeSDK.AuthClientThreeLegged(
-    config.forge.credentials.client_id,
-    config.forge.credentials.client_secret,
-    config.forge.callbackURL,
-    config.forge.scope,
-    true);
+ 
 
   var href = decodeURIComponent(req.query.id);
   if (href === '') {
@@ -48,7 +46,7 @@ router.get('/api/forge/tree', function (req, res) {
     return;
   }
   if (href === '#') {
-    getHubs(forge3legged, token.getForgeCredentials(), res);
+    getHubs(token, res);
   }
   else {
     var params = href.split('/');
@@ -56,7 +54,7 @@ router.get('/api/forge/tree', function (req, res) {
     var resourceId = params[params.length - 1];
     switch (resourceName) {
       case 'hubs':
-        getProjects(resourceId, forge3legged, token.getForgeCredentials(), res);
+        getProjects(resourceId, token, res);
         break;
       case 'projects':
         // for a project, first we need the top/root folder
@@ -75,10 +73,13 @@ router.get('/api/forge/tree', function (req, res) {
   }
 });
 
-function getHubs(oauthClient, credentials, res) {
-  var hubs = new forgeSDK.HubsApi();
-  hubs.getHubs({}, oauthClient, credentials)
+async function getHubs(token, res) {
+  await getDAHubs(token._session)
     .then(function (data) {
+      console.log("DA hubs data response", data)
+
+      console.log("process.env.CONSOLELOG", process.env.CONSOLELOG)
+
       if (process.env.CONSOLELOG)
         if (data.body.meta.warnings)
           for (var key in data.body.meta.warnings) {
@@ -88,7 +89,8 @@ function getHubs(oauthClient, credentials, res) {
 
 
       var hubsForTree = [];
-      data.body.data.forEach(function (hub) {
+      // data.body.data.forEach(function (hub) {
+        data.forEach(function (hub) {
         var hubType;
 
         switch (hub.attributes.extension.type) {
@@ -118,13 +120,14 @@ function getHubs(oauthClient, credentials, res) {
     });
 }
 
-function getProjects(hubId, oauthClient, credentials, res) {
-  var projects = new forgeSDK.ProjectsApi();
+async function getProjects(hubId, token, res) {
+  // var projects = new forgeSDK.ProjectsApi();
 
-  projects.getHubProjects(hubId, {}, oauthClient, credentials)
+  // projects.getHubProjects(hubId, {}, oauthClient, credentials)
+  await getDAProjects(hubId, token._session)
     .then(function (projects) {
       var projectsForTree = [];
-      projects.body.data.forEach(function (project) {
+      projects.forEach(function (project) {
         var projectType = 'projects';
         switch (project.attributes.extension.type) {
           case 'projects:autodesk.core:Project':

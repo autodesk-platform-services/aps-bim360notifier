@@ -25,12 +25,12 @@ function Credentials(session) {
   this._session = session;
 }
 
-Credentials.prototype.setForgeCredentials = function (accessToken) {
-  this._session.ForgeCredentials = accessToken;
+Credentials.prototype.setApsCredentials = function (accessToken) {
+  this._session.ApsCredentials = accessToken;
 };
 
-Credentials.prototype.getForgeCredentials = function () {
-  return this._session.ForgeCredentials;
+Credentials.prototype.getApsCredentials = function () {
+  return this._session.ApsCredentials;
 };
 
 Credentials.prototype.setAutodeskId = function(autodeskId){

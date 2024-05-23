@@ -25,7 +25,7 @@ $(document).ready(function () {
 
 function prepareAutodeskSide() {
   jQuery.ajax({
-    url: '/api/forge/profile',
+    url: '/api/aps/profile',
     success: function (profile) {
       // if profile is OK, then user is logged in
       // start preparing for tree
@@ -60,7 +60,7 @@ function prepareAutodeskSide() {
         // as profile is not authorized, this user is not authorized
         $('#autodeskSigninButton').click(function () {
           jQuery.ajax({
-            url: '/api/forge/signin',
+            url: '/api/aps/signin',
             success: function (forgeOAuthURL) {
               location.href = forgeOAuthURL;
             }

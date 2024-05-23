@@ -29,7 +29,7 @@ var config = require('./config');
 
 router.get('/api/forge/clientID', function (req, res) {
   res.json({
-    'ForgeClientId': config.forge.credentials.client_id
+    'ForgeClientId': config.aps.credentials.client_id
   });
 });
 
