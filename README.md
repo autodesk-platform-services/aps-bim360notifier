@@ -102,7 +102,7 @@ Open the browser and go to [http://localhost:3000](http://localhost:3000).
 
 A deployment should have the following environment variables defined (e.g. Heroku app settings):
 
-![](www/img/readme/envvars.png)
+<!-- ![](www/img/readme/envvars.png) -->
 
 ### Deploy on Heroku
 
