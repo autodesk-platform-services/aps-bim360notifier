@@ -70,7 +70,7 @@ Create an app for [Slack API](https://api.slack.com/) on your company account to
 Make sure to have [NodeJS](https://nodejs.org) installed. Clone this project or download it. It's recommended to install [GitHub desktop](https://desktop.github.com). To clone it via command line, use the following (Terminal on MacOSX/Linux, Git Shell on Windows):
 
 ```
-git clone https://github.com/autodesk-platform-services/aps-bim360notifier.git
+git clone https://github.com/autodesk-platform-services/aps-webhook-notifier.git
 ```
 
 Set all all environment variables described on the **Setup** section using the following:
