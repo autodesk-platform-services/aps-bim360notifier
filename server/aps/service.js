@@ -110,6 +110,11 @@ service.getDAProjects = async (hubId, token) => {
     } )
 };
 
+service.getProjectFolders = async(hubId, projectId, token) => {
+    const resp = await dataManagementClient.getProjectTopFolders(token.access_token, hubId, projectId);
+    return resp.data;
+}
+
 
 
 

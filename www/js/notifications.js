@@ -13,7 +13,7 @@ function createNotifications() {
     $("#createNotifications").notify({
         title: "Please select a Folder"
       },
-      {position: "bottom", className: 'error'}
+      {position: "top", className: 'error'}
     );
     return;
   }

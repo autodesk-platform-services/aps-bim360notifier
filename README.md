@@ -10,15 +10,15 @@
 [![Data-Management](https://img.shields.io/badge/Data%20Management-v2-green.svg)](http://developer.autodesk.com/)
 [![Webhooks](https://img.shields.io/badge/Webhooks-v1-green.svg)](http://developer.autodesk.com/)
 
-This sample application demonstrate Webhooks notifications for changes on **BIM 360 Docs**, **BIM 360 Team** (formerly A360) and **Fusion 360** to SMS, Email and chat bot.
+This sample application demonstrate Webhooks notifications for changes on **BIM 360 / Autodesk Docs** and **Fusion 360** to SMS, Email and chat bot.
   
 ## Thumbnail
 
-![thumbnail](./thumbnail.png)
+![thumbnail](./main-capture.PNG)
 
 ## Live version
 
-Running [live here](http://bim360notifier.autodesk.io) and [video demonstration here](https://www.youtube.com/watch?v=oZ_aNoBbpUM).
+<!-- Running [live here](http://bim360notifier.autodesk.io) and [video demonstration here](https://www.youtube.com/watch?v=oZ_aNoBbpUM). -->
 
 **Usage**: after sign in with your Autodesk account, (1) expand the tree to select a **folder**. Then (2), select the events to get notification. Finally, (3) enter a mobile phone number, and/or email address, and/or slack channel. Click on **Create notification**.
 
@@ -27,24 +27,24 @@ Running [live here](http://bim360notifier.autodesk.io) and [video demonstration 
 ## Prerequisites
 This samples requires:
 
-1. Forge credentials; 
+1. APS  credentials; 
 2. Twilio account;
 3. Postmark account; 
 4. Slack account. 
 
 Create the following environment variables:
 
-### Forge
+### APS
 
-For using this sample, you need an Autodesk developer credentials. Visit the [Forge Developer Portal](https://developer.autodesk.com), sign up for an account, then [create an app](https://developer.autodesk.com/myapps/create). For this new app, use `http://localhost:3000/api/forge/callback/oauth` as Callback URL. Finally take note of the **Client ID** and **Client Secret**. For localhost testing:
+For using this sample, you need an Autodesk developer credentials. Visit the [Forge Developer Portal](https://aps.autodesk.com/), sign up for an account, then [create an app](https://aps.autodesk.com/myapps/). Account creation and APS app creation and set up explained in details [Here](https://tutorials.autodesk.io/#create-an-account) . For this new app, use `http://localhost:3000/api/aps/callback/oauth` as Callback URL. Finally take note of the **Client ID** and **Client Secret**. For localhost testing:
 
-- FORGE\_CLIENT\_ID and set it to above-mentioned **Client ID**
-- FORGE\_CLIENT\_SECRET and set it to above-mentioned **Client Secret**
-- FORGE\_CALLBACK\_URL and set it to `http://localhost:3000/api/forge/callback/oauth`
+- APS\_CLIENT\_ID and set it to above-mentioned **Client ID**
+- APS\_CLIENT\_SECRET and set it to above-mentioned **Client Secret**
+- APS\_CALLBACK\_URL and set it to `http://localhost:3000/api/aps/callback/oauth`
 
 Now you need a local server to receive Webhook notifications, you can use ngrok as [described here](https://developer.autodesk.com/en/docs/webhooks/v1/tutorials/configuring-your-server/), then create a env var with the value (e.g. https://abc123.ngrok.io`)
 
-- FORGE\_WEBHOOK\_URL
+- APS\_WEBHOOK\_URL
 
 ### Twilio
 
@@ -70,7 +70,7 @@ Create an app for [Slack API](https://api.slack.com/) on your company account to
 Make sure to have [NodeJS](https://nodejs.org) installed. Clone this project or download it. It's recommended to install [GitHub desktop](https://desktop.github.com). To clone it via command line, use the following (Terminal on MacOSX/Linux, Git Shell on Windows):
 
 ```
-git clone https://github.com/autodesk-forge/data.management-nodejs-webhook
+git clone https://github.com/autodesk-platform-services/aps-bim360notifier.git
 ```
 
 Set all all environment variables described on the **Setup** section using the following:

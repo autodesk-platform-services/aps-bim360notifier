@@ -32,7 +32,7 @@ var express = require('express');
 var router = express.Router();
 // forge oAuth package
 var forgeSDK = require('forge-apis');
-const { authRefreshMiddleware, getDAHubs, getDAProjects } = require('./service.js');
+const { authRefreshMiddleware, getDAHubs, getDAProjects, getProjectFolders } = require('./service.js');
 
 router.use('/api', authRefreshMiddleware);
 
@@ -59,7 +59,7 @@ router.get('/api/forge/tree', function (req, res) {
       case 'projects':
         // for a project, first we need the top/root folder
         var hubId = params[params.length - 3];
-        getFolders(hubId, resourceId/*project_id*/, forge3legged, token.getForgeCredentials(), res)
+        getFolders(hubId, resourceId/*project_id*/, token, res)
         break;
       //case 'folders':
       //  var projectId = params[params.length - 3];
@@ -153,12 +153,13 @@ async function getProjects(hubId, token, res) {
     });
 }
 
-function getFolders(hubId, projectId, oauthClient, credentials, res) {
-  var projects = new forgeSDK.ProjectsApi();
-  projects.getProjectTopFolders(hubId, projectId, oauthClient, credentials)
+async function getFolders(hubId, projectId, token, res) {
+  // var projects = new forgeSDK.ProjectsApi();
+  // projects.getProjectTopFolders(hubId, projectId, oauthClient, credentials)
+  await getProjectFolders(hubId,projectId, token._session)
     .then(function (topFolders) {
       var folderItemsForTree = [];
-      topFolders.body.data.forEach(function (item) {
+      topFolders.forEach(function (item) {
         folderItemsForTree.push(prepareItemForTree(
           item.links.self.href,
           item.attributes.displayName == null ? item.attributes.name : item.attributes.displayName,
