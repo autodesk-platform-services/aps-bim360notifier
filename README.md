@@ -92,7 +92,6 @@ or you can set up the environment variables in the .env as below
 APS_CLIENT_ID=value
 APS_CLIENT_SECRET=value
 APS_CALLBACK_URL="http://localhost:3000/api/aps/callback/oauth" # URL your users will be redirected to after logging in with their Autodesk account
-SERVER_SESSION_SECRET=value # secret phrase used to encrypt/decrypt server session cookies
 APS_WEBHOOK_URL=value # host name for the webhook callback
 TWILIO_ACCOUNT_SID=value
 TWILIO_TOKEN=value
