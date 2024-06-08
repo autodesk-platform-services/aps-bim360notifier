@@ -108,9 +108,11 @@ service.getTwoLeggedToken = async (req, res) => {
 // Data Management APIs
 service.getDAHubs = async (token) => {
     const resp = await dataManagementClient.getHubs(token.access_token);
-    return resp.data.filter((item)=>{
-        return item.id.startsWith('b.');
-    })
+    console.log("hubs", resp.data)
+    return resp.data;
+    // return resp.data.filter((item)=>{
+    //     return item.id.startsWith('b.');
+    // })
 };
 
 service.getDAProjects = async (hubId, token) => {
