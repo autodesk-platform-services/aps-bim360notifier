@@ -22,7 +22,8 @@
     "node-html-encoder": "0.0.2",
     "postmark": "^2.2.8",
     "request": "^2.83.0",
-    "twilio": "^3.9.0"
+    "twilio": "^3.9.0",
+    "dotenv": "^16.4.5"
   },
   "scripts": {
     "start": "NODE_ENV=production node start.js",

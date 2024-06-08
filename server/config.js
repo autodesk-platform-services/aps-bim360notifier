@@ -17,6 +17,7 @@
 /////////////////////////////////////////////////////////////////////
 
 'use strict'; // http://www.w3schools.com/js/js_strict.asp
+require('dotenv').config();
 
 module.exports = {
   // Autodesk Forge configuration
@@ -24,14 +25,14 @@ module.exports = {
     // Required scopes for your application on server-side
     scope: ['data:read', 'data:write', 'data:create', 'data:search'],
     // this this callback URL when creating your client ID and secret
-    callbackURL: process.env.APS_CALLBACK_URL || 'http://localhost:3000/api/aps/callback/oauth',
+    callbackURL: process.env.APS_CALLBACK_URL || null,
     // credentials
     credentials: {
-      client_id: process.env.APS_CLIENT_ID || '05ltBGvC8W88u3e7txh4Li4adVx2wrDv',
-      client_secret: process.env.APS_CLIENT_SECRET || 'pTJNHHd2oedpx766'
+      client_id: process.env.APS_CLIENT_ID || null,
+      client_secret: process.env.APS_CLIENT_SECRET || null
     },
 
-    hookCallbackHost : process.env.APS_WEBHOOK_URL
+    hookCallbackHost : process.env.APS_WEBHOOK_URL || null
   },
 
   twilio: {

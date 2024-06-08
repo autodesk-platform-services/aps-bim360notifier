@@ -27,6 +27,7 @@ function prepareAutodeskSide() {
   jQuery.ajax({
     url: '/api/aps/profile',
     success: function (profile) {
+      console.log("Profile fetched", profile)
       // if profile is OK, then user is logged in
       // start preparing for tree
       var autodeskSide = $('#autodeskSide');

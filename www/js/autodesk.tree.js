@@ -24,7 +24,7 @@ function prepareAutodeskTree() {
       'themes': {"icons": true},
       'multiple': false,
       'data': {
-        "url": '/api/forge/tree',
+        "url": '/api/aps/tree',
         "dataType": "json",
         'multiple': true,
         'data': function (node) {
@@ -94,8 +94,8 @@ function prepareAutodeskTree() {
   })
 }
 
-$.getJSON("/api/forge/clientID", function (res) {
-  $("#ClientID").val(res.ForgeClientId);
+$.getJSON("/api/aps/clientID", function (res) {
+  $("#ClientID").val(res.ApsClientId);
   $("#provisionAccountSave").click(function () {
     $('#provisionAccountModal').modal('toggle');
     $('#autodeskTree').jstree(true).refresh();

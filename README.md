@@ -14,7 +14,7 @@ This sample application demonstrate Webhooks notifications for changes on **BIM 
   
 ## Thumbnail
 
-![thumbnail](./main-capture.PNG)
+![thumbnail](./main-page.PNG)
 
 ## Live version
 
@@ -27,7 +27,7 @@ This sample application demonstrate Webhooks notifications for changes on **BIM 
 ## Prerequisites
 This samples requires:
 
-1. APS  credentials; 
+1. APS credentials; 
 2. Twilio account;
 3. Postmark account; 
 4. Slack account. 
@@ -36,7 +36,7 @@ Create the following environment variables:
 
 ### APS
 
-For using this sample, you need an Autodesk developer credentials. Visit the [Forge Developer Portal](https://aps.autodesk.com/), sign up for an account, then [create an app](https://aps.autodesk.com/myapps/). Account creation and APS app creation and set up explained in details [Here](https://tutorials.autodesk.io/#create-an-account) . For this new app, use `http://localhost:3000/api/aps/callback/oauth` as Callback URL. Finally take note of the **Client ID** and **Client Secret**. For localhost testing:
+For using this sample, you need an Autodesk developer credentials. Visit the [APS Developer Portal](https://aps.autodesk.com/), sign up for an account, then [create an app](https://aps.autodesk.com/myapps/). Account creation and APS app creation and set up explained in details [Here](https://tutorials.autodesk.io/#create-an-account) . For this new app, use `http://localhost:3000/api/aps/callback/oauth` as Callback URL. Finally take note of the **Client ID** and **Client Secret**. For localhost testing:
 
 - APS\_CLIENT\_ID and set it to above-mentioned **Client ID**
 - APS\_CLIENT\_SECRET and set it to above-mentioned **Client Secret**
@@ -86,7 +86,21 @@ export VARIABLE_NAME=value
 ```
 set VARIABLE_NAME=value
 ```
+or you can set up the environment variables in the .env as below
 
+```
+APS_CLIENT_ID=value
+APS_CLIENT_SECRET=value
+APS_CALLBACK_URL="http://localhost:3000/api/aps/callback/oauth" # URL your users will be redirected to after logging in with their Autodesk account
+SERVER_SESSION_SECRET=value # secret phrase used to encrypt/decrypt server session cookies
+APS_WEBHOOK_URL=value # host name for the webhook callback
+TWILIO_ACCOUNT_SID=value
+TWILIO_TOKEN=value
+TWILIO_FROM_NUMER=value
+POSTMARK_ACCOUNT_ID=value
+POSTMARK_FROM_EMAIL=value
+
+```
 Install the required packaged and run the application:
 
 ```
@@ -101,6 +115,8 @@ Open the browser and go to [http://localhost:3000](http://localhost:3000).
 ## Deployment
 
 A deployment should have the following environment variables defined (e.g. Heroku app settings):
+![thumbnail](./heroku.PNG)
+
 
 <!-- ![](www/img/readme/envvars.png) -->
 

@@ -32,11 +32,11 @@ var express = require('express');
 var router = express.Router();
 // forge oAuth package
 var forgeSDK = require('forge-apis');
-const { authRefreshMiddleware, getDAHubs, getDAProjects, getProjectFolders } = require('./service.js');
+const { authRefreshMiddleware, getDAHubs, getDAProjects, getProjectFolders,getDAFolderContents, getItemVersions } = require('./service.js');
 
 router.use('/api', authRefreshMiddleware);
 
-router.get('/api/forge/tree', function (req, res) {
+router.get('/api/aps/tree', function (req, res) {
   var token = new Credentials(req.session);
  
 
@@ -61,14 +61,14 @@ router.get('/api/forge/tree', function (req, res) {
         var hubId = params[params.length - 3];
         getFolders(hubId, resourceId/*project_id*/, token, res)
         break;
-      //case 'folders':
-      //  var projectId = params[params.length - 3];
-      //  getFolderContents(projectId, resourceId/*folder_id*/, forge3legged, token.getForgeCredentials(), res);
-      //  break;
-      //case 'items':
-      //  var projectId = params[params.length - 3];
-      //  getVersions(projectId, resourceId/*item_id*/, forge3legged, token.getForgeCredentials(), res);
-      //  break;
+      case 'folders':
+       var projectId = params[params.length - 3];
+       getFolderContents(projectId, resourceId/*folder_id*/, token, res);
+       break;
+      case 'items':
+       var projectId = params[params.length - 3];
+       getVersions(projectId, resourceId/*item_id*/, token, res);
+       break;
     }
   }
 });
@@ -76,14 +76,11 @@ router.get('/api/forge/tree', function (req, res) {
 async function getHubs(token, res) {
   await getDAHubs(token._session)
     .then(function (data) {
-      console.log("DA hubs data response", data)
-
-      console.log("process.env.CONSOLELOG", process.env.CONSOLELOG)
 
       if (process.env.CONSOLELOG)
-        if (data.body.meta.warnings)
-          for (var key in data.body.meta.warnings) {
-            var warning = data.body.meta.warnings[key];
+        if (data.meta.warnings)
+          for (var key in data.meta.warnings) {
+            var warning = data.meta.warnings[key];
             console.log(warning.HttpStatusCode + "/" + warning.ErrorCode + ":" + warning.Detail + ' > ' + warning.Title)
           }
 
@@ -121,9 +118,7 @@ async function getHubs(token, res) {
 }
 
 async function getProjects(hubId, token, res) {
-  // var projects = new forgeSDK.ProjectsApi();
-
-  // projects.getHubProjects(hubId, {}, oauthClient, credentials)
+ 
   await getDAProjects(hubId, token._session)
     .then(function (projects) {
       var projectsForTree = [];
@@ -154,8 +149,7 @@ async function getProjects(hubId, token, res) {
 }
 
 async function getFolders(hubId, projectId, token, res) {
-  // var projects = new forgeSDK.ProjectsApi();
-  // projects.getProjectTopFolders(hubId, projectId, oauthClient, credentials)
+  
   await getProjectFolders(hubId,projectId, token._session)
     .then(function (topFolders) {
       var folderItemsForTree = [];
@@ -164,8 +158,9 @@ async function getFolders(hubId, projectId, token, res) {
           item.links.self.href,
           item.attributes.displayName == null ? item.attributes.name : item.attributes.displayName,
           item.type,
-          false // Changed here for this sample
+          true // Changed here for this sample
         ))
+     
       });
       res.json(folderItemsForTree);
     })
@@ -179,12 +174,12 @@ var unsupported = [
   'bot@autodesk360.com'
 ];
 
-function getFolderContents(projectId, folderId, oauthClient, credentials, res) {
-  var folders = new forgeSDK.FoldersApi();
-  folders.getFolderContents(projectId, folderId, {}, oauthClient, credentials)
+async function getFolderContents(projectId, folderId, token, res) {
+  // var folders = new forgeSDK.FoldersApi();
+  await getDAFolderContents(token._session, projectId, folderId, {} )
     .then(function (folderContents) {
       var folderItemsForTree = [];
-      folderContents.body.data.forEach(function (item) {
+      folderContents.forEach(function (item) {
 
         var displayName = item.attributes.displayName == null ? item.attributes.name : item.attributes.displayName;
         var itemType = (unsupported.indexOf(item.attributes.createUserName) == -1 ? item.type : 'unsupported');
@@ -205,16 +200,17 @@ function getFolderContents(projectId, folderId, oauthClient, credentials, res) {
     });
 }
 
-function getVersions(projectId, itemId, oauthClient, credentials, res) {
+async function getVersions(projectId, itemId,token, res) {
   var items = new forgeSDK.ItemsApi();
-  items.getItemVersions(projectId, itemId, {}, oauthClient, credentials)
+  // items.getItemVersions(projectId, itemId, {}, oauthClient, credentials)
+  await getItemVersions(token._session, projectId,itemId)
     .then(function (versions) {
       var versionsForTree = [];
       var moment = require('moment');
-      versions.body.data.forEach(function (version) {
+      versions.forEach(function (version) {
         var lastModifiedTime = moment(version.attributes.lastModifiedTime);
         var days = moment().diff(lastModifiedTime, 'days')
-        var dateFormated = (versions.body.data.length > 1 || days > 7 ? lastModifiedTime.format('MMM D, YYYY, h:mm a') : lastModifiedTime.fromNow());
+        var dateFormated = (versions.length > 1 || days > 7 ? lastModifiedTime.format('MMM D, YYYY, h:mm a') : lastModifiedTime.fromNow());
         var versionst = version.id.match(/^(.*)\?version=(\d+)$/) [2];
         versionsForTree.push(prepareItemForTree(
           version.links.self.href,

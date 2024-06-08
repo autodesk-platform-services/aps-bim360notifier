@@ -8,6 +8,7 @@ function createNotifications() {
 
   var autodeskTree = $('#autodeskTree').jstree(true);
   var autodeskNode = autodeskTree.get_selected(true)[0];
+  console.log("Selected tree node ", autodeskNode)
 
   if (!autodeskNode || autodeskNode.type != 'folders') {
     $("#createNotifications").notify({
@@ -15,11 +16,22 @@ function createNotifications() {
       },
       {position: "top", className: 'error'}
     );
+    alert("Please select a Folder")
+
+    return;
+  }
+  if (events.length < 1) {
+    alert("Please check some events")
+    return;
+  }
+
+  if (!$('#phone').val() && !$('#email').val()&& !$('#slackchannel').val()) {
+    alert("Please provide atleast one notification channel")
     return;
   }
 
   $.ajax({
-    url: '/api/forge/hook',
+    url: '/api/aps/hook',
     contentType: 'application/json',
     type: 'POST',
     //dataType: 'json', comment this to avoid parsing the response which would result in an error
@@ -31,7 +43,7 @@ function createNotifications() {
       'slack': $('#slackchannel').val()
     }),
     success: function (res) {
-      console.log(res);
+      console.log("Hook creation",res);
       res.forEach(function(event){
         $.notify("Hook created: " + event, "success");
       });
@@ -48,7 +60,7 @@ function showEvents(folderId) {
     folderId = params[params.length - 1];
 
   $.ajax({
-    url: '/api/forge/hook/' + folderId,
+    url: '/api/aps/hook/' + folderId,
     contentType: 'application/json',
     type: 'GET',
     success: function (hook) {

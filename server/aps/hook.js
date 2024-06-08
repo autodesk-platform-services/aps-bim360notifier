@@ -32,14 +32,19 @@ var postmark = require("postmark");
 var config = require('./../config');
 var Credentials = require('./../credentials');
 
+const { getTwoLeggedToken } = require('./service.js');
+
 // this is the endpoint that will be exposed
-var hookCallbackEntpoint = '/api/forge/hook/callback';
+var hookCallbackEntpoint = '/api/aps/hook/callback';
 
 router.post('/api/aps/hook', jsonParser, function (req, res) {
   // session with access token
   var token = new Credentials(req.session);
   var events = req.body.events;
   var folderHttp = req.body.folderId;
+  // 'https://developer.api.autodesk.com/data/v1/projects/b.5c99c874-2b15-4031-aed3-8cadc2ae325e/folders/urn:adsk.wipprod:fs.folder:co.-9NFIuLdQZq1B8m0v12N7A
+  
+  // var folderHttp  ="https://developer.api.autodesk.com/data/v1/projects/b.5c99c874-2b15-4031-aed3-8cadc2ae325e/folders/urn:adsk.wipprod:fs.folder:co.-9NFIuLdQZq1B8m0v12N7A"
 
   // input from user
   var sms = req.body.sms;
@@ -50,6 +55,8 @@ router.post('/api/aps/hook', jsonParser, function (req, res) {
     return;
   }
 
+
+  // urn:adsk.wipprod:fs.folder:co.-9NFIuLdQZq1B8m0v12N7A
   // extract projectId & folderId from input
   var params = folderHttp.split('/');
   var folderId = params[params.length - 1];
@@ -65,7 +72,7 @@ router.post('/api/aps/hook', jsonParser, function (req, res) {
   if (slack) attributes['slack'] = slack;
 
   Get2LegggedToken(function(two_legged_access_token){
-    DeleteAndCreateHooks(two_legged_access_token, token.getForgeCredentials().access_token, folderId, attributes, function(status){
+    DeleteAndCreateHooks(two_legged_access_token, token._session.access_token, folderId, attributes, function(status){
       res.status(200).json(status);
     });
   });
@@ -81,13 +88,13 @@ function DeleteAndCreateHooks(two_legged_access_token, three_legged_access_token
     });
 }
 
-router.get('/api/api/hook/*', function (req, res) {
+router.get('/api/aps/hook/*', function (req, res) {
   var params = req.url.split('/');
   var folderId = params[params.length - 1];
 
   var token = new Credentials(req.session);
   Get2LegggedToken(function(two_legged_access_token){
-    var hooks = new WebHooks(two_legged_access_token, token.getForgeCredentials().access_token, folderId);
+    var hooks = new WebHooks(two_legged_access_token, token._session.access_token, folderId);
 
     hooks.GetHooks(function (hooks2lo, hooks3lo) {
       if (hooks2lo.length == 0 && hooks3lo.length == 0) {
@@ -182,7 +189,7 @@ router.post(hookCallbackEntpoint, jsonParser, function (req, res) {
     });
   }
   else{
-    var message = 'BIM360 Notifier: ' + itemType + ' ' + payload.name + ' was ' + eventName + ' on project ' + payload.ancestors[1].name
+    var message = 'APS Webhook Notifier: ' + itemType + ' ' + payload.name + ' was ' + eventName + ' on project ' + payload.ancestors[1].name
     sendMessage(hook, message);
   }
 });
@@ -191,6 +198,7 @@ function sendMessage(hook, message)
 {
   // SMS Notification
   if (hook.hookAttribute.sms && config.twilio.credentials.accountSid) {
+    // if (config.twilio.credentials.accountSid) {
     var client = new twilio(config.twilio.credentials.accountSid, config.twilio.credentials.token);
     client.messages.create({
       body: message,
@@ -228,19 +236,14 @@ function sendMessage(hook, message)
   }
 }
 
-function Get2LegggedToken(callback)
+async function Get2LegggedToken(callback)
 {
-    request.post('https://developer.api.autodesk.com/authentication/v1/authenticate', 
-      function (error, response) {
-        var access_token = JSON.parse(response.body).access_token;
+    await getTwoLeggedToken().then(
+      function (response) {
+        var access_token = response.access_token;
         callback(access_token);
       }
-    ).form({
-      client_id: config.forge.credentials.client_id, 
-      client_secret: config.forge.credentials.client_secret,
-      grant_type: 'client_credentials',
-      scope: 'data:read'
-    });
+    )
 }
 
 // *****************************
@@ -351,7 +354,8 @@ WebHooks.prototype.DeleteHooks = function (callback) {
 
 WebHooks.prototype.CreateHook = function (attributes, callback) {
   // this is how the hook will callback
-  var callbackEndpoint = config.forge.hookCallbackHost + hookCallbackEntpoint;
+  var callbackEndpoint = config.aps.hookCallbackHost + hookCallbackEntpoint;
+  // var callbackEndpoint = config.aps.hookCallbackHost;
 
   var requestBody = {
     callbackUrl: callbackEndpoint,

@@ -27,9 +27,9 @@ var jsonParser = bodyParser.json();
 // app config settings
 var config = require('./config');
 
-router.get('/api/forge/clientID', function (req, res) {
+router.get('/api/aps/clientID', function (req, res) {
   res.json({
-    'ForgeClientId': config.aps.credentials.client_id
+    'ApsClientId': config.aps.credentials.client_id
   });
 });
 

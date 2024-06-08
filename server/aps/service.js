@@ -38,13 +38,12 @@ service.authCallbackMiddleware = async (req, res, next) => {
 
      const publicCredentials = internalCredentials;
     req.session.access_token = internalCredentials.access_token;
-    token.setApsCredentials(internalCredentials.access_token)
+    token.setApsCredentials(internalCredentials)
     req.session.public_token = publicCredentials.access_token;
     req.session.refresh_token = publicCredentials.refresh_token;
     req.session.expires_at = Date.now() + internalCredentials.expires_in * 1000;
     const userInfo = await authenticationClient.getUserinfoAsync(req.session.access_token);
     token.setAutodeskId(userInfo.eidm_guid)
-    console.log("User Info", userInfo)
     req.session.user_name = userInfo.name
     req.session.user_email =  userInfo.email;
 
@@ -68,6 +67,7 @@ service.authRefreshMiddleware = async (req, res, next) => {
 
         req.session.public_token = publicCredentials.access_token;
         req.session.access_token = internalCredentials.access_token;
+        token.setApsCredentials(internalCredentials);
 
         req.session.refresh_token = publicCredentials.refresh_token;
         req.session.expires_at = Date.now() + internalCredentials.expires_in * 1000;
@@ -88,12 +88,22 @@ service.authRefreshMiddleware = async (req, res, next) => {
 };
 
 service.getUserProfile = async (req, res ) => {
+    var token = new Credentials(req.session);
    
 
     const userInfo = await authenticationClient.getUserinfoAsync(req.access_token);
 
     return userInfo;
 };
+
+//Get 2-LO token
+service.getTwoLeggedToken = async (req, res) => {
+  
+    var scope= ['data:read'];
+    var credentials = await authenticationClient.getTwoLeggedTokenAsync(config.aps.credentials.client_id, config.aps.credentials.client_secret,scope)
+    // console.log("2 legged token", credentials)
+    return credentials;
+}
 
 // Data Management APIs
 service.getDAHubs = async (token) => {
@@ -105,14 +115,23 @@ service.getDAHubs = async (token) => {
 
 service.getDAProjects = async (hubId, token) => {
     const resp = await dataManagementClient.getHubProjects(token.access_token, hubId);
-    return resp.data.filter( (item)=>{
-        return item.attributes.extension.data.projectType == 'BIM360';
-    } )
+    return resp.data;
+    // return resp.data.filter( (item)=>{
+    //     return item.attributes.extension.data.projectType == 'BIM360';
+    // } )
 };
 
 service.getProjectFolders = async(hubId, projectId, token) => {
     const resp = await dataManagementClient.getProjectTopFolders(token.access_token, hubId, projectId);
     return resp.data;
+}
+service.getDAFolderContents= async(token, projectId,folderId) => {
+    const resp = await dataManagementClient.getFolderContents(token.access_token, projectId,folderId,{})
+    return resp.data;
+}
+service.getItemVersions = async (token, projectId, itemId) => {
+const resp = await dataManagementClient.getItemVersions(token.access_token, projectId, itemId);
+return resp.data;
 }
 
 

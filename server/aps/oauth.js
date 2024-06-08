@@ -36,7 +36,6 @@ const { getAuthorizationUrl, authCallbackMiddleware, authRefreshMiddleware, getU
 router.get('/api/aps/signin', function (req, res) {
 
   const url = getAuthorizationUrl();
-  console.log("V2 authorize url", url)
   res.end(url)
 });
 
@@ -62,9 +61,8 @@ router.get('/api/auth/token', authRefreshMiddleware, function (req, res) {
 router.get('/api/aps/profile', authRefreshMiddleware, async function (req, res, next) {
   try {
       const profile = await getUserProfile(req.internalOAuthToken);
-      console.log('user-profile', profile)
      
-      res.json({ name: `${profile.name} `,picture: `${profile.picture.sizeX40}`, id: `${profile.userId}`
+      res.json({ name: `${profile.name} `,picture: `${profile.picture}`, id: `${profile.eidm_guid}`
      });
   } catch (err) {
       next(err);
