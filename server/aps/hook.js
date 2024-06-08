@@ -42,9 +42,6 @@ router.post('/api/aps/hook', jsonParser, function (req, res) {
   var token = new Credentials(req.session);
   var events = req.body.events;
   var folderHttp = req.body.folderId;
-  // 'https://developer.api.autodesk.com/data/v1/projects/b.5c99c874-2b15-4031-aed3-8cadc2ae325e/folders/urn:adsk.wipprod:fs.folder:co.-9NFIuLdQZq1B8m0v12N7A
-  
-  // var folderHttp  ="https://developer.api.autodesk.com/data/v1/projects/b.5c99c874-2b15-4031-aed3-8cadc2ae325e/folders/urn:adsk.wipprod:fs.folder:co.-9NFIuLdQZq1B8m0v12N7A"
 
   // input from user
   var sms = req.body.sms;
@@ -202,8 +199,8 @@ function sendMessage(hook, message)
     var client = new twilio(config.twilio.credentials.accountSid, config.twilio.credentials.token);
     client.messages.create({
       body: message,
-      to: hook.hookAttribute.sms,
-      from: config.twilio.fromNumber
+      from: config.twilio.fromNumber,
+      to: hook.hookAttribute.sms
     }, function (err, result) {
       if (result != undefined)
         console.log(hook.hookAttribute.sms + ': ' + message + ' => ' + result.status);
@@ -217,7 +214,7 @@ function sendMessage(hook, message)
     client.sendEmail({
       "From": config.postmark.fromEmail,
       "To": hook.hookAttribute.email,
-      "Subject": "BIM 360 Notifier",
+      "Subject": "APS Webhook Notifier",
       "TextBody": message
     }).then(function (res) {
       console.log(hook.hookAttribute.email + ': ' + message + ' => ' + res.Message);
