@@ -101,27 +101,20 @@ service.getTwoLeggedToken = async (req, res) => {
   
     var scope= ['data:read'];
     var credentials = await authenticationClient.getTwoLeggedTokenAsync(config.aps.credentials.client_id, config.aps.credentials.client_secret,scope)
-    // console.log("2 legged token", credentials)
     return credentials;
 }
 
 // Data Management APIs
 service.getDAHubs = async (token) => {
     const resp = await dataManagementClient.getHubs(token.access_token);
-    console.log("hubs", resp.data)
     return resp.data;
-    // return resp.data.filter((item)=>{
-    //     return item.id.startsWith('b.');
-    // })
+    
 };
 
 service.getDAProjects = async (hubId, token) => {
     const resp = await dataManagementClient.getHubProjects(token.access_token, hubId);
     return resp.data;
-    // return resp.data.filter( (item)=>{
-    //     return item.attributes.extension.data.projectType == 'BIM360';
-    // } )
-};
+}
 
 service.getProjectFolders = async(hubId, projectId, token) => {
     const resp = await dataManagementClient.getProjectTopFolders(token.access_token, hubId, projectId);
