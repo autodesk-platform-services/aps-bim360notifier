@@ -44,7 +44,7 @@ router.get('/api/aps/signin', function (req, res) {
 // OAuth callback from Autodesk Forge
 
 
-router.get('/api/aps/callback/oauth', authCallbackMiddleware, function (req, res) {
+router.get('/api/aps/callback', authCallbackMiddleware, function (req, res) {
   try {
   res.redirect('/');
 } catch (err) {
