@@ -37,7 +37,6 @@ service.authCallbackMiddleware = async (req, res, next) => {
     req.session.access_token = internalCredentials.access_token;
     req.session.refresh_token = internalCredentials.refresh_token;
     req.session.expires_at = Date.now() + internalCredentials.expires_in * 1000;
-   
 
     next();
 
