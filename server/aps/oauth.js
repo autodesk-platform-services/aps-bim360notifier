@@ -46,6 +46,7 @@ router.get('/api/aps/signin', function (req, res) {
 
 router.get('/api/aps/callback/oauth', authCallbackMiddleware, function (req, res, next) {
   try {
+  console.log("oauth complete; redirecting to homepage");
   res.redirect('/');
 } catch (err) {
   next(err);
