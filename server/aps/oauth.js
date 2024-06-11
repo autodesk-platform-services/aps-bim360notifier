@@ -36,6 +36,7 @@ const { getAuthorizationUrl, authCallbackMiddleware, authRefreshMiddleware, getU
 router.get('/api/aps/signin', function (req, res) {
 
   const url = getAuthorizationUrl();
+  console.log("Authorize url ", url)
   res.end(url)
 });
 
@@ -49,6 +50,7 @@ router.get('/api/aps/callback/oauth', authCallbackMiddleware, function (req, res
   res.redirect('/');
 } catch (err) {
   next(err);
+  console.log(err)
 }
 
 });

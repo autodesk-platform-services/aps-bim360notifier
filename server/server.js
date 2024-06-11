@@ -22,6 +22,7 @@ var express = require('express');
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var cookieSession = require('cookie-session');
+var config = require('././config');
 
 var app = express();
 
@@ -62,7 +63,7 @@ app.use('/css/libraries/jstree', express.static(__dirname + '/../node_modules/js
 app.use('/css/fonts', express.static(__dirname + '/../node_modules/bootstrap/dist/fonts')); // redirect static calls
 app.use('/img/libraries', express.static(__dirname + '/../node_modules/intl-tel-input/build/img')); // redirect static calls
 app.set('port', process.env.PORT || 3000); // main port
-
+app.use(session({ secret: config.aps.SERVER_SESSION_SECRET, maxAge: 24 * 60 * 60 * 1000 }));
 // prepare our API endpoint routing
 var forgeOAuth = require('./aps/oauth.js');
 var forgeTree = require('./aps/tree.js');

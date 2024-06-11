@@ -37,7 +37,7 @@ const { authRefreshMiddleware, getDAHubs, getDAProjects, getProjectFolders,getDA
 router.use('/api', authRefreshMiddleware);
 
 router.get('/api/aps/tree', function (req, res) {
-  var token = new Credentials(req.session);
+  var token = req.session;
  
 
   var href = decodeURIComponent(req.query.id);
@@ -74,7 +74,7 @@ router.get('/api/aps/tree', function (req, res) {
 });
 
 async function getHubs(token, res) {
-  await getDAHubs(token._session)
+  await getDAHubs(token)
     .then(function (data) {
 
       if (process.env.CONSOLELOG)
@@ -119,7 +119,7 @@ async function getHubs(token, res) {
 
 async function getProjects(hubId, token, res) {
  
-  await getDAProjects(hubId, token._session)
+  await getDAProjects(hubId, token)
     .then(function (projects) {
       var projectsForTree = [];
       projects.forEach(function (project) {
@@ -150,7 +150,7 @@ async function getProjects(hubId, token, res) {
 
 async function getFolders(hubId, projectId, token, res) {
   
-  await getProjectFolders(hubId,projectId, token._session)
+  await getProjectFolders(hubId,projectId, token)
     .then(function (topFolders) {
       var folderItemsForTree = [];
       topFolders.forEach(function (item) {
@@ -176,7 +176,7 @@ var unsupported = [
 
 async function getFolderContents(projectId, folderId, token, res) {
   // var folders = new forgeSDK.FoldersApi();
-  await getDAFolderContents(token._session, projectId, folderId, {} )
+  await getDAFolderContents(token, projectId, folderId, {} )
     .then(function (folderContents) {
       var folderItemsForTree = [];
       folderContents.forEach(function (item) {
@@ -203,7 +203,7 @@ async function getFolderContents(projectId, folderId, token, res) {
 async function getVersions(projectId, itemId,token, res) {
   var items = new forgeSDK.ItemsApi();
   // items.getItemVersions(projectId, itemId, {}, oauthClient, credentials)
-  await getItemVersions(token._session, projectId,itemId)
+  await getItemVersions(token, projectId,itemId)
     .then(function (versions) {
       var versionsForTree = [];
       var moment = require('moment');

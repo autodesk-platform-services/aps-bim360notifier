@@ -12,7 +12,6 @@ var router = express.Router();
 
 // const { client_id, client_secret, callback_url, scopes, PUBLIC_TOKEN_SCOPES } = require('../config.js');
 var config = require('./../config');
-var Credentials = require('./../credentials');
 
 
 const sdkmanager = SdkManagerBuilder.Create().build();
@@ -31,28 +30,20 @@ service.getLogoutUrl = () => authenticationClient.Logout("/");
 
 
 service.authCallbackMiddleware = async (req, res, next) => {
-    var token = new Credentials(req.session);
 
     
     const internalCredentials = await authenticationClient.getThreeLeggedTokenAsync(config.aps.credentials.client_id,config.aps.credentials.client_secret,req.query.code, config.aps.callbackURL);
 
-     const publicCredentials = internalCredentials;
     req.session.access_token = internalCredentials.access_token;
-    token.setApsCredentials(internalCredentials)
-    req.session.public_token = publicCredentials.access_token;
-    req.session.refresh_token = publicCredentials.refresh_token;
+    req.session.refresh_token = internalCredentials.refresh_token;
     req.session.expires_at = Date.now() + internalCredentials.expires_in * 1000;
-    const userInfo = await authenticationClient.getUserinfoAsync(req.session.access_token);
-    token.setAutodeskId(userInfo.eidm_guid)
-    req.session.user_name = userInfo.name
-    req.session.user_email =  userInfo.email;
+   
 
     next();
 
 };
 
 service.authRefreshMiddleware = async (req, res, next) => {
-    var token = new Credentials(req.session);
 
     let { refresh_token, expires_at } = req.session;
     if (!refresh_token) {
@@ -67,12 +58,12 @@ service.authRefreshMiddleware = async (req, res, next) => {
 
         req.session.public_token = publicCredentials.access_token;
         req.session.access_token = internalCredentials.access_token;
-        token.setApsCredentials(internalCredentials);
+        // token.setApsCredentials(internalCredentials);
 
         req.session.refresh_token = publicCredentials.refresh_token;
         req.session.expires_at = Date.now() + internalCredentials.expires_in * 1000;
     const userInfo = await authenticationClient.getUserinfoAsync(req.session.access_token);
-    token.setAutodeskId(userInfo.eidm_guid)
+    // token.setAutodeskId(userInfo.eidm_guid)
 
 
     }
@@ -88,7 +79,6 @@ service.authRefreshMiddleware = async (req, res, next) => {
 };
 
 service.getUserProfile = async (req, res ) => {
-    var token = new Credentials(req.session);
    
 
     const userInfo = await authenticationClient.getUserinfoAsync(req.access_token);

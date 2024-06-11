@@ -30,7 +30,6 @@ var postmark = require("postmark");
 
 // app config settings
 var config = require('./../config');
-var Credentials = require('./../credentials');
 
 const { getTwoLeggedToken } = require('./service.js');
 
@@ -39,7 +38,7 @@ var hookCallbackEntpoint = '/api/aps/hook/callback';
 
 router.post('/api/aps/hook', jsonParser, function (req, res) {
   // session with access token
-  var token = new Credentials(req.session);
+  var token = req.session;
   var events = req.body.events;
   var folderHttp = req.body.folderId;
 
@@ -69,7 +68,7 @@ router.post('/api/aps/hook', jsonParser, function (req, res) {
   if (slack) attributes['slack'] = slack;
 
   Get2LegggedToken(function(two_legged_access_token){
-    DeleteAndCreateHooks(two_legged_access_token, token._session.access_token, folderId, attributes, function(status){
+    DeleteAndCreateHooks(two_legged_access_token, token.access_token, folderId, attributes, function(status){
       res.status(200).json(status);
     });
   });
@@ -89,9 +88,9 @@ router.get('/api/aps/hook/*', function (req, res) {
   var params = req.url.split('/');
   var folderId = params[params.length - 1];
 
-  var token = new Credentials(req.session);
+  var token = req.session;
   Get2LegggedToken(function(two_legged_access_token){
-    var hooks = new WebHooks(two_legged_access_token, token._session.access_token, folderId);
+    var hooks = new WebHooks(two_legged_access_token, token.access_token, folderId);
 
     hooks.GetHooks(function (hooks2lo, hooks3lo) {
       if (hooks2lo.length == 0 && hooks3lo.length == 0) {
@@ -195,7 +194,6 @@ function sendMessage(hook, message)
 {
   // SMS Notification
   if (hook.hookAttribute.sms && config.twilio.credentials.accountSid) {
-    // if (config.twilio.credentials.accountSid) {
     var client = new twilio(config.twilio.credentials.accountSid, config.twilio.credentials.token);
     client.messages.create({
       body: message,

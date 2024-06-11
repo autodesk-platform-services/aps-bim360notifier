@@ -24,6 +24,7 @@ module.exports = {
   aps: {
     // Required scopes for your application on server-side
     scope: ['data:read', 'data:write', 'data:create', 'data:search'],
+
     // this this callback URL when creating your client ID and secret
     callbackURL: process.env.APS_CALLBACK_URL || null,
     // credentials
@@ -32,7 +33,8 @@ module.exports = {
       client_secret: process.env.APS_CLIENT_SECRET || null
     },
 
-    hookCallbackHost : process.env.APS_WEBHOOK_URL || null
+    hookCallbackHost : process.env.APS_WEBHOOK_URL || null,
+    SERVER_SESSION_SECRET: process.env.SERVER_SESSION_SECRET || null
   },
 
   twilio: {
