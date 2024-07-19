@@ -27,6 +27,7 @@ var request = require('request');
 var async = require('async');
 var twilio = require('twilio');
 var postmark = require("postmark");
+const mail = require('@sendgrid/mail');
 
 // app config settings
 var config = require('./../config');
@@ -205,21 +206,37 @@ function sendMessage(hook, message)
     });
   }
 
-  // Email notification
-  if (hook.hookAttribute.email) {
-    var client = new postmark.Client(config.postmark.credentials.accountId);
+    // Email notification using sendGrid
+    //Set SendGrid Api key
+    mail.setApiKey(config.aps.sendGrid.apiKey)
+    if (hook.hookAttribute.email) {
 
-    client.sendEmail({
-      "From": config.postmark.fromEmail,
-      "To": hook.hookAttribute.email,
-      "Subject": "APS Webhook Notifier",
-      "TextBody": message
-    }).then(function (res) {
-      console.log(hook.hookAttribute.email + ': ' + message + ' => ' + res.Message);
-    }).catch(function (err) {
-      console.log(err);
-    });
-  }
+      const msg = {
+        to: hook.hookAttribute.email,
+        from: config.aps.sendGrid.fromEmail,
+        subject: 'APS Webhook Notifier',
+        text: message,
+        // html: '<strong>and easy to do anywhere, even with Node.js</strong>',
+      };
+      mail.send(msg)
+      
+    }
+
+  // Email notification using postmark
+  // if (hook.hookAttribute.email) {
+  //   var client = new postmark.Client(config.postmark.credentials.accountId);
+
+  //   client.sendEmail({
+  //     "From": config.postmark.fromEmail,
+  //     "To": hook.hookAttribute.email,
+  //     "Subject": "APS Webhook Notifier",
+  //     "TextBody": message
+  //   }).then(function (res) {
+  //     console.log(hook.hookAttribute.email + ': ' + message + ' => ' + res.Message);
+  //   }).catch(function (err) {
+  //     console.log(err);
+  //   });
+  // }
 
   // slack notification
   if (hook.hookAttribute.slack) {

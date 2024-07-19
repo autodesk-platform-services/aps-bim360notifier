@@ -50,5 +50,9 @@ module.exports = {
       accountId: process.env.POSTMARK_ACCOUNT_ID
     },
     fromEmail: process.env.POSTMARK_FROM_EMAIL
+  },
+  sendGrid:{
+    apiKey: process.env.SENDGRID_API_KEY,
+    fromEmail: process.env.SENDGRID_FROM_EMAIL
   }
 };
