@@ -216,9 +216,14 @@ function sendMessage(hook, message)
         from: config.aps.sendGrid.fromEmail,
         subject: 'APS Webhook Notifier',
         text: message,
-        // html: '<strong>and easy to do anywhere, even with Node.js</strong>',
+        html: '<strong>APS Webhook Notifier</strong>',
       };
-      mail.send(msg)
+      mail.send(msg).then(() => {
+        console.log('Email sent successfully')
+      })
+      .catch((error) => {
+        console.error(error)
+      })
       
     }
 
