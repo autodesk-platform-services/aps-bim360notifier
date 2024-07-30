@@ -38,6 +38,8 @@ const { getTwoLeggedToken } = require('./service.js');
 var hookCallbackEntpoint = '/api/aps/hook/callback';
 
 router.post('/api/aps/hook', jsonParser, function (req, res) {
+
+
   // session with access token
   var token = req.session;
   var events = req.body.events;
@@ -208,7 +210,7 @@ function sendMessage(hook, message)
 
     // Email notification using sendGrid
     //Set SendGrid Api key
-    mail.setApiKey(config.aps.sendGrid.apiKey)
+    mail.setApiKey(config.sendGrid.apiKey)
     if (hook.hookAttribute.email) {
 
       const msg = {
@@ -219,7 +221,7 @@ function sendMessage(hook, message)
         html: '<strong>APS Webhook Notifier</strong>',
       };
       mail.send(msg).then(() => {
-        console.log('Email sent successfully')
+        console.log('APS Webhook Notifier Email sent successfully')
       })
       .catch((error) => {
         console.error(error)
